@@ -1,24 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
+import Task from './components/Task';
 
-function App() {
+const App: React.FC = () => {
+  const [tasks, setTasks] = useState<string[]>([]);
+  const [newTask, setNewTask] = useState<string>('');
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNewTask(event.target.value.trim());
+  }
+
+  const handleAddTask = () => {
+    if(newTask) {
+      setTasks([...tasks, newTask]);
+      setNewTask('');
+    }
+  }
+  const handleDeleteTask = (index: number) => {
+   const copyTask = [...tasks];
+   copyTask.splice(index, 1);
+   setTasks(copyTask);
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Task Manager</h1>
+      <div>
+        <input
+          type="text"
+          placeholder="Enter a task"
+          value={newTask}
+          onChange={handleInputChange}
+        />
+        <button onClick={handleAddTask}>Add Task</button>
+      </div>
+      <div>
+        {
+          tasks.map((task, index) => <Task key={index} onDelete={() => handleDeleteTask(index)} task={task} />)
+        }
+      </div>
     </div>
   );
 }
